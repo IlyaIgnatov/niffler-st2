@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@Disabled
+//@Disabled
 @ExtendWith(GenerateSpendExtension.class)
 public class SpendsWebTest {
 
