@@ -7,6 +7,7 @@ import static com.codeborne.selenide.Selenide.$$;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import niffler.jupiter.GenerateCategory;
 import niffler.jupiter.GenerateSpend;
 import niffler.model.CurrencyValues;
 import niffler.model.SpendJson;
@@ -16,6 +17,10 @@ import org.junit.jupiter.api.Test;
 
 public class SpendsWebTest {
 
+    final static String USERNAME = "PETR";
+    final static String PASSWORD = "12345";
+    final static String CATEGORY = "Education";
+
     static {
         Configuration.browserSize = "1920x1080";
     }
@@ -24,17 +29,21 @@ public class SpendsWebTest {
     void doLogin() {
         Selenide.open("http://127.0.0.1:3000/main");
         $("a[href*='redirect']").click();
-        $("input[name='username']").setValue("PETR");
-        $("input[name='password']").setValue("12345");
+        $("input[name='username']").setValue(USERNAME);
+        $("input[name='password']").setValue(PASSWORD);
         $("button[type='submit']").click();
     }
 
+    @GenerateCategory(
+            username = USERNAME,
+            category = CATEGORY
+    )
     @GenerateSpend(
-        username = "PETR",
+        username = USERNAME,
         description = "QA GURU ADVANCED VOL 2",
         currency = CurrencyValues.RUB,
         amount = 52000.00,
-        category = "Обучение"
+        category = CATEGORY
     )
     @Test
     void spendShouldBeDeletedByActionInTable(SpendJson spend) {
