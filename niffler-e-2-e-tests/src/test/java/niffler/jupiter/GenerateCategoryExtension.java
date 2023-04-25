@@ -26,6 +26,9 @@ public class GenerateCategoryExtension implements ParameterResolver, BeforeEachC
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+
+        final String testID = context.getRequiredTestClass() + String.valueOf(context.getTestMethod());
+
         GenerateCategory annotation = context.getRequiredTestMethod()
                 .getAnnotation(GenerateCategory.class);
 
@@ -37,9 +40,7 @@ public class GenerateCategoryExtension implements ParameterResolver, BeforeEachC
             CategoryJson created = categoryService.addCategory(category)
                     .execute()
                     .body();
-            context.getStore(NAMESPACE).put(context.getRequiredTestClass() +
-                    String.valueOf(context.getTestMethod()) +
-                    "category", created);
+            context.getStore(NAMESPACE).put(testID + "category", created);
         }
     }
 
