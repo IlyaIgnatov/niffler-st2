@@ -45,7 +45,9 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
             SpendJson created = spendService.addSpend(spend)
                 .execute()
                 .body();
-            context.getStore(NAMESPACE).put("spend", created);
+            context.getStore(NAMESPACE).put(context.getRequiredTestClass() +
+                    String.valueOf(context.getTestMethod()) +
+                    "spend", created);
         }
     }
 
@@ -58,6 +60,8 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
     @Override
     public SpendJson resolveParameter(ParameterContext parameterContext,
         ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get("spend", SpendJson.class);
+        return extensionContext.getStore(NAMESPACE).get( extensionContext.getRequiredTestClass() +
+                String.valueOf(extensionContext.getTestMethod()) +
+                "spend", SpendJson.class);
     }
 }

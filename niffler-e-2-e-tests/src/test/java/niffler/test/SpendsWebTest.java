@@ -15,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-public class SpendsWebTest {
+public class SpendsWebTest extends BaseTest{
 
     final static String USERNAME = "PETR";
     final static String PASSWORD = "12345";

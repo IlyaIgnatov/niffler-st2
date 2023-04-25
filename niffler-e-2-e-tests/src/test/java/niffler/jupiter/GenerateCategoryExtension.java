@@ -37,7 +37,9 @@ public class GenerateCategoryExtension implements ParameterResolver, BeforeEachC
             CategoryJson created = categoryService.addCategory(category)
                     .execute()
                     .body();
-            context.getStore(NAMESPACE).put("category", created);
+            context.getStore(NAMESPACE).put(context.getRequiredTestClass() +
+                    String.valueOf(context.getTestMethod()) +
+                    "category", created);
         }
     }
 
