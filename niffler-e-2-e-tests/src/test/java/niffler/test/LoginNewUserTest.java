@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 public class LoginNewUserTest extends BaseWebTest {
 
     @GenerateUser(
-            username = "Valentin3",
+            username = "Valentin",
             password = "12345"
     )
     @Test
@@ -61,7 +61,7 @@ public class LoginNewUserTest extends BaseWebTest {
     }
 
     @GenerateUser(
-            username = "Lena",
+            username = "Ivan",
             password = "12345"
     )
     @Test

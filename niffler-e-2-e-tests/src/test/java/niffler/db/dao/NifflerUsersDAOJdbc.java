@@ -158,6 +158,8 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
             try (PreparedStatement st1 = conn.prepareStatement("DELETE FROM authorities WHERE user_id=(?)")) {
                 st1.setObject(1, uuid);
 
+                st1.executeUpdate();
+
                 try (PreparedStatement st2 = conn.prepareStatement("DELETE FROM users WHERE id=(?)")) {
                     st2.setObject(1, uuid);
 
