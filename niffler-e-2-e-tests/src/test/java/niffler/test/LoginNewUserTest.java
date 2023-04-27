@@ -23,6 +23,7 @@ import niffler.db.entity.UserEntity;
 import niffler.jupiter.annotation.ClasspathUser;
 import niffler.jupiter.annotation.GenerateUser;
 import niffler.model.UserJson;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class LoginNewUserTest extends BaseWebTest {
     }
 
     @GenerateUser(
-            username = "Lena338",
+            username = "Lena",
             password = "12345"
     )
     @Test
@@ -74,5 +75,36 @@ public class LoginNewUserTest extends BaseWebTest {
         $("button[type='submit']").click();
 
         $(byText("User account is locked")).should(visible);
+    }
+
+    @GenerateUser(
+            username = "Lena",
+            password = "12345"
+    )
+    @Test
+    void checkDeleteUser(UserEntity user){
+        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
+
+        usersDAO.deleteUser(usersDAO.getUserId(user.getUsername()));
+
+        Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
+        $("a[href*='redirect']").click();
+        $("input[name='username']").setValue(user.getUsername());
+        $("input[name='password']").setValue(user.getPassword());
+        $("button[type='submit']").click();
+
+        $(byText("Bad credentials")).should(visible);
+    }
+
+    @GenerateUser(
+            username = "Maxim",
+            password = "12345"
+    )
+    @Test
+    void checkReadUser(UserEntity user){
+        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
+
+        UserEntity readedUser = usersDAO.readUser(usersDAO.getUserId(user.getUsername()));
+        Assertions.assertEquals(user,readedUser);
     }
 }

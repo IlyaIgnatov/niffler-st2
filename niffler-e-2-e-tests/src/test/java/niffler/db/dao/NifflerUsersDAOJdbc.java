@@ -39,9 +39,12 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
                 final UUID createdUserId;
 
                 try (ResultSet keys = st1.getGeneratedKeys()) {
-                        keys.next();
-                        createdUserId = UUID.fromString(keys.getString(1));
-                        user.setId(createdUserId);
+                    if (keys.next()) {
+                    createdUserId = UUID.fromString(keys.getString(1));
+                    user.setId(createdUserId);
+                } else {
+                        throw new IllegalArgumentException("Unable to create user, no uuid");
+                    }
                 }
 
                 String insertAuthoritiesSql = "INSERT INTO authorities (user_id, authority) VALUES ('%s', '%s')";
@@ -76,8 +79,30 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
     }
 
     @Override
-    public int readUser(UserEntity user) {
-        return 0;
+    public UserEntity readUser(UUID uuid) {
+
+        UserEntity userEntity = new UserEntity();
+
+        try (Connection conn = ds.getConnection();
+             PreparedStatement st = conn.prepareStatement("SELECT * FROM users WHERE id=(?)")) {
+            st.setObject(1, uuid);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                userEntity.setId(UUID.fromString(rs.getString(1)));
+                userEntity.setUsername(rs.getString(2));
+                userEntity.setPassword(rs.getString(3));
+                userEntity.setEnabled(rs.getBoolean(4));
+                userEntity.setAccountNonExpired(rs.getBoolean(5));
+                userEntity.setAccountNonLocked(rs.getBoolean(6));
+                userEntity.setCredentialsNonExpired(rs.getBoolean(7));
+            } else {
+                throw new IllegalArgumentException("Can`t find user by given uuid: " + uuid);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return userEntity;
     }
 
     @Override
@@ -86,8 +111,8 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
 
         try (Connection conn = ds.getConnection();
              PreparedStatement st1 = conn.prepareStatement("UPDATE users SET "
-                    + "(username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired)="
-                    + "(?, ?, ?, ?, ?, ?) WHERE id=(?)")) {
+                     + "(username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired)="
+                     + "(?, ?, ?, ?, ?, ?) WHERE id=(?)")) {
             st1.setString(1, user.getUsername());
             st1.setString(2, pe.encode(user.getPassword()));
             st1.setBoolean(3, user.getEnabled());
@@ -97,7 +122,7 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
             st1.setObject(7, uuid);
 
             executeUpdate = st1.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
@@ -105,18 +130,46 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
     }
 
     @Override
-    public int deleteUser(UserEntity user) {
-        return 0;
+    public int deleteUser(UUID uuid) {
+        int executeUpdate;
+
+        try (Connection conn = ds.getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement st1 = conn.prepareStatement("DELETE FROM authorities WHERE user_id=(?)")) {
+                st1.setObject(1, uuid);
+
+                try (PreparedStatement st2 = conn.prepareStatement("DELETE FROM users WHERE id=(?)")) {
+                    st2.setObject(1, uuid);
+
+                    executeUpdate = st2.executeUpdate();
+                }
+
+            } catch (SQLException e) {
+                conn.rollback();
+                conn.setAutoCommit(true);
+                throw new RuntimeException(e);
+            }
+
+            conn.commit();
+            conn.setAutoCommit(true);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return executeUpdate;
     }
 
     @Override
-public UUID getUserId(String userName) {
+    public UUID getUserId(String userName) {
         try (Connection conn = ds.getConnection();
              PreparedStatement st = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
             st.setString(1, userName);
             ResultSet resultSet = st.executeQuery();
             if (resultSet.next()) {
-            return UUID.fromString(resultSet.getString(1));
+                return UUID.fromString(resultSet.getString(1));
             } else {
                 throw new IllegalArgumentException("Can`t find user by given username: " + userName);
             }

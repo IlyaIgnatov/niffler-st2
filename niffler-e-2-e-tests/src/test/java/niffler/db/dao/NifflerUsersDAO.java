@@ -9,11 +9,11 @@ public interface NifflerUsersDAO {
 
     int createUser(UserEntity user);
 
-    int readUser(UserEntity user);
+    UserEntity readUser(UUID uuid);
 
     int updateUser(UUID uuid, UserEntity user);
 
-    int deleteUser(UserEntity user);
+    int deleteUser(UUID uuid);
 
     UUID getUserId(String userName);
 
