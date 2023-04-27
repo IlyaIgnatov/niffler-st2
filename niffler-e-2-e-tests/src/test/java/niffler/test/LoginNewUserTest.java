@@ -16,6 +16,7 @@ import niffler.db.entity.Authority;
 import niffler.db.entity.AuthorityEntity;
 import niffler.db.entity.UserEntity;
 import niffler.jupiter.annotation.ClasspathUser;
+import niffler.jupiter.annotation.GenerateUser;
 import niffler.model.UserJson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -49,6 +50,9 @@ public class LoginNewUserTest extends BaseWebTest {
     usersDAO.createUser(ue);
   }
 
+  @GenerateUser(
+
+  )
   @Test
   void loginTest() {
     Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
