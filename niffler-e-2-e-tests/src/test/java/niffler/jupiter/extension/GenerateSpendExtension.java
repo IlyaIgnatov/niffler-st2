@@ -31,6 +31,9 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+
+        final String testID = context.getRequiredTestClass() + String.valueOf(context.getTestMethod());
+
         GenerateSpend annotation = context.getRequiredTestMethod()
             .getAnnotation(GenerateSpend.class);
 
@@ -46,7 +49,7 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
             SpendJson created = spendService.addSpend(spend)
                 .execute()
                 .body();
-            context.getStore(NAMESPACE).put("spend", created);
+            context.getStore(NAMESPACE).put(testID + "spend", created);
         }
     }
 
@@ -59,6 +62,9 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
     @Override
     public SpendJson resolveParameter(ParameterContext parameterContext,
         ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get("spend", SpendJson.class);
+
+        final String testID = extensionContext.getRequiredTestClass() + String.valueOf(extensionContext.getTestMethod());
+
+        return extensionContext.getStore(NAMESPACE).get(testID + "spend", SpendJson.class);
     }
 }
