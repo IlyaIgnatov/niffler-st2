@@ -7,6 +7,7 @@ import static com.codeborne.selenide.Selenide.$$;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Selenide;
 import io.qameta.allure.AllureId;
+import niffler.jupiter.annotation.GenerateCategory;
 import niffler.jupiter.annotation.GenerateSpend;
 import niffler.model.CurrencyValues;
 import niffler.model.SpendJson;
@@ -16,22 +17,30 @@ import org.junit.jupiter.api.Test;
 
 @Disabled
 public class SpendsWebTest extends BaseWebTest {
+    final static String USERNAME = "PETR";
+    final static String PASSWORD = "12345";
+    final static String CATEGORY = "Education";
+
 
     @BeforeEach
     void doLogin() {
         Selenide.open("http://127.0.0.1:3000/main");
         $("a[href*='redirect']").click();
-        $("input[name='username']").setValue("dima");
-        $("input[name='password']").setValue("12345");
+        $("input[name='username']").setValue(USERNAME);
+        $("input[name='password']").setValue(PASSWORD);
         $("button[type='submit']").click();
     }
 
+    @GenerateCategory(
+            username = USERNAME,
+            category = CATEGORY
+    )
     @GenerateSpend(
-        username = "dima",
+        username = USERNAME,
         description = "QA GURU ADVANCED VOL 2",
         currency = CurrencyValues.RUB,
         amount = 52000.00,
-        category = "Обучение"
+        category = CATEGORY
     )
     @AllureId("101")
     @Test
