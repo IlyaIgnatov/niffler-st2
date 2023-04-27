@@ -32,6 +32,7 @@ public class GenerateCategoryExtension implements ParameterResolver, BeforeEachC
         GenerateCategory annotation = context.getRequiredTestMethod()
                 .getAnnotation(GenerateCategory.class);
 
+
         if (annotation != null) {
             CategoryJson category = new CategoryJson();
             category.setUsername(annotation.username());
