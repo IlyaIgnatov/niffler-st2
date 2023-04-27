@@ -8,6 +8,7 @@ import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureId;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import niffler.db.dao.NifflerUsersDAO;
 import niffler.db.dao.NifflerUsersDAOJdbc;
@@ -17,6 +18,7 @@ import niffler.db.entity.UserEntity;
 import niffler.jupiter.annotation.ClasspathUser;
 import niffler.model.UserJson;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -29,9 +31,9 @@ public class LoginNewUserTest extends BaseWebTest {
   private UserEntity ue;
 
   @BeforeEach
-  void createUserForTest() {
+  void createUserForTest() throws SQLException {
     ue = new UserEntity();
-    ue.setUsername("valentin0");
+    ue.setUsername("valentin1");
     ue.setPassword("12345");
     ue.setEnabled(true);
     ue.setAccountNonExpired(true);
@@ -48,7 +50,7 @@ public class LoginNewUserTest extends BaseWebTest {
   }
 
   @Test
-  void loginTest() throws IOException {
+  void loginTest() {
     Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
     $("a[href*='redirect']").click();
     $("input[name='username']").setValue(ue.getUsername());
