@@ -104,7 +104,7 @@ public class LoginNewUserTest extends BaseWebTest {
     void checkReadUser(UserEntity user){
         NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
 
-        UserEntity readedUser = usersDAO.readUser(usersDAO.getUserId(user.getUsername()));
-        Assertions.assertEquals(user,readedUser);
+        UserEntity readUser = usersDAO.readUser(usersDAO.getUserId(user.getUsername()));
+        Assertions.assertEquals(user,readUser);
     }
 }

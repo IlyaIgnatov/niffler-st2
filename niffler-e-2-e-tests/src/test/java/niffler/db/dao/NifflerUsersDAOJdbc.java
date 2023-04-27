@@ -1,12 +1,15 @@
 package niffler.db.dao;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.sql.DataSource;
 
 import niffler.db.DataSourceProvider;
 import niffler.db.ServiceDB;
+import niffler.db.entity.Authority;
+import niffler.db.entity.AuthorityEntity;
 import niffler.db.entity.UserEntity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -84,9 +87,9 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
         UserEntity userEntity = new UserEntity();
 
         try (Connection conn = ds.getConnection();
-             PreparedStatement st = conn.prepareStatement("SELECT * FROM users WHERE id=(?)")) {
-            st.setObject(1, uuid);
-            ResultSet rs = st.executeQuery();
+             PreparedStatement st1 = conn.prepareStatement("SELECT * FROM users WHERE id=(?)")) {
+            st1.setObject(1, uuid);
+            ResultSet rs = st1.executeQuery();
             if (rs.next()) {
                 userEntity.setId(UUID.fromString(rs.getString(1)));
                 userEntity.setUsername(rs.getString(2));
@@ -97,6 +100,21 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
                 userEntity.setCredentialsNonExpired(rs.getBoolean(7));
             } else {
                 throw new IllegalArgumentException("Can`t find user by given uuid: " + uuid);
+            }
+
+            try (PreparedStatement st2 = conn.prepareStatement("SELECT * FROM authorities WHERE user_id=(?)")){
+                st2.setObject(1, uuid);
+                ResultSet rs2 = st2.executeQuery();
+                List<AuthorityEntity> listAuths = new ArrayList<>();
+
+                while (rs2.next()){
+                    AuthorityEntity authorityEntity = new AuthorityEntity();
+                    authorityEntity.setId(UUID.fromString(rs2.getString(1)));
+                    authorityEntity.setAuthority(Authority.valueOf(rs2.getString(3)));
+                    listAuths.add(authorityEntity);
+                }
+
+                userEntity.setAuthorities(listAuths);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
