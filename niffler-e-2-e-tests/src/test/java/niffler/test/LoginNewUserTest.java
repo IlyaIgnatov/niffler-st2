@@ -30,28 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class LoginNewUserTest extends BaseWebTest {
 
-    private NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
-    private UserEntity ue;
-
-    /*@BeforeEach
-    void createUserForTest() throws SQLException {
-        ue = new UserEntity();
-        ue.setUsername("valentin1");
-        ue.setPassword("12345");
-        ue.setEnabled(true);
-        ue.setAccountNonExpired(true);
-        ue.setAccountNonLocked(true);
-        ue.setCredentialsNonExpired(true);
-        ue.setAuthorities(Arrays.stream(Authority.values()).map(
-                a -> {
-                    AuthorityEntity ae = new AuthorityEntity();
-                    ae.setAuthority(a);
-                    return ae;
-                }
-        ).toList());
-        usersDAO.createUser(ue);
-    }*/
-
     @GenerateUser(
             username = "Valentin2",
             password = "12345"

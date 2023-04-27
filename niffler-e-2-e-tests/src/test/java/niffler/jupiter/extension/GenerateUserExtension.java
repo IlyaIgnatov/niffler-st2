@@ -6,12 +6,9 @@ import niffler.db.entity.Authority;
 import niffler.db.entity.AuthorityEntity;
 import niffler.db.entity.UserEntity;
 import niffler.jupiter.annotation.GenerateUser;
-import niffler.model.SpendJson;
 import org.junit.jupiter.api.extension.*;
 
-import javax.print.attribute.standard.MediaSize;
 import java.util.Arrays;
-import java.util.Date;
 
 public class GenerateUserExtension implements ParameterResolver, BeforeEachCallback {
 
