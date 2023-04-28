@@ -14,6 +14,8 @@ import niffler.jupiter.annotation.GenerateUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 
 public class LoginNewUserTest extends BaseWebTest {
 
@@ -42,6 +44,7 @@ public class LoginNewUserTest extends BaseWebTest {
         NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
 
         UserEntity updUserEntity = new UserEntity();
+        updUserEntity.setId(usersDAO.getUserId(user.getUsername()));
         updUserEntity.setUsername(user.getUsername() + "-updated");
         updUserEntity.setPassword("123456");
         updUserEntity.setEnabled(false);
@@ -49,7 +52,7 @@ public class LoginNewUserTest extends BaseWebTest {
         updUserEntity.setAccountNonLocked(false);
         updUserEntity.setCredentialsNonExpired(false);
 
-        usersDAO.updateUser(usersDAO.getUserId(user.getUsername()), updUserEntity);
+        usersDAO.updateUser(updUserEntity);
 
         Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
         $("a[href*='redirect']").click();

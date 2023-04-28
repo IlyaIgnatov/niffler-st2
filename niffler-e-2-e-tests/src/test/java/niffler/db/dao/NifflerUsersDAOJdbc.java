@@ -124,7 +124,7 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
     }
 
     @Override
-    public int updateUser(UUID uuid, UserEntity user) {
+    public int updateUser(UserEntity user) {
         int executeUpdate;
 
         try (Connection conn = ds.getConnection();
@@ -137,7 +137,7 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
             st1.setBoolean(4, user.getAccountNonExpired());
             st1.setBoolean(5, user.getAccountNonLocked());
             st1.setBoolean(6, user.getCredentialsNonExpired());
-            st1.setObject(7, uuid);
+            st1.setObject(7, user.getId());
 
             executeUpdate = st1.executeUpdate();
         } catch (SQLException e) {
