@@ -43,9 +43,9 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
 
                 try (ResultSet keys = st1.getGeneratedKeys()) {
                     if (keys.next()) {
-                    createdUserId = UUID.fromString(keys.getString(1));
-                    user.setId(createdUserId);
-                } else {
+                        createdUserId = UUID.fromString(keys.getString(1));
+                        user.setId(createdUserId);
+                    } else {
                         throw new IllegalArgumentException("Unable to create user, no uuid");
                     }
                 }
@@ -87,7 +87,9 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
         UserEntity userEntity = new UserEntity();
 
         try (Connection conn = ds.getConnection();
-             PreparedStatement st1 = conn.prepareStatement("SELECT * FROM users WHERE id=(?)")) {
+             PreparedStatement st1 = conn.prepareStatement("SELECT * FROM users WHERE id=(?)");
+             PreparedStatement st2 = conn.prepareStatement("SELECT * FROM authorities WHERE user_id=(?)")
+             ) {
             st1.setObject(1, uuid);
             ResultSet rs = st1.executeQuery();
             if (rs.next()) {
@@ -102,17 +104,15 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
                 throw new IllegalArgumentException("Can`t find user by given uuid: " + uuid);
             }
 
-            try (PreparedStatement st2 = conn.prepareStatement("SELECT * FROM authorities WHERE user_id=(?)")){
                 st2.setObject(1, uuid);
                 ResultSet rs2 = st2.executeQuery();
                 List<AuthorityEntity> listAuths = new ArrayList<>();
 
-                while (rs2.next()){
+                while (rs2.next()) {
                     AuthorityEntity authorityEntity = new AuthorityEntity();
                     authorityEntity.setId(UUID.fromString(rs2.getString(1)));
                     authorityEntity.setAuthority(Authority.valueOf(rs2.getString(3)));
                     listAuths.add(authorityEntity);
-                }
 
                 userEntity.setAuthorities(listAuths);
             }
@@ -155,16 +155,14 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
 
             conn.setAutoCommit(false);
 
-            try (PreparedStatement st1 = conn.prepareStatement("DELETE FROM authorities WHERE user_id=(?)")) {
+            try (PreparedStatement st1 = conn.prepareStatement("DELETE FROM authorities WHERE user_id=(?)");
+                 PreparedStatement st2 = conn.prepareStatement("DELETE FROM users WHERE id=(?)")
+            ) {
                 st1.setObject(1, uuid);
-
                 st1.executeUpdate();
 
-                try (PreparedStatement st2 = conn.prepareStatement("DELETE FROM users WHERE id=(?)")) {
-                    st2.setObject(1, uuid);
-
-                    executeUpdate = st2.executeUpdate();
-                }
+                st2.setObject(1, uuid);
+                executeUpdate = st2.executeUpdate();
 
             } catch (SQLException e) {
                 conn.rollback();

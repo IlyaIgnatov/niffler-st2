@@ -14,7 +14,6 @@ import niffler.jupiter.annotation.GenerateUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
 
 
 public class LoginNewUserTest extends BaseWebTest {
