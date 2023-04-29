@@ -1,5 +1,6 @@
 package niffler.jupiter.extension;
 
+import com.github.javafaker.Faker;
 import niffler.db.dao.NifflerUsersDAO;
 import niffler.db.dao.NifflerUsersDAOJdbc;
 import niffler.db.entity.Authority;
@@ -17,7 +18,7 @@ public class GenerateUserExtension implements ParameterResolver, BeforeEachCallb
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-
+        Faker faker = new Faker();
         final String testID = context.getRequiredTestClass() + String.valueOf(context.getTestMethod());
 
         GenerateUser annotation = context.getRequiredTestMethod()
@@ -26,8 +27,10 @@ public class GenerateUserExtension implements ParameterResolver, BeforeEachCallb
         if (annotation != null){
 
             UserEntity createdUserEntity = new UserEntity();
-            createdUserEntity.setUsername(annotation.username());
-            createdUserEntity.setPassword(annotation.password());
+            createdUserEntity.setUsername(
+                    (annotation.username()).equals("empty") ? faker.name().username() : annotation.username());
+            createdUserEntity.setPassword(
+                    (annotation.password()).equals("empty") ? faker.internet().password() : annotation.password());
             createdUserEntity.setEnabled(true);
             createdUserEntity.setAccountNonExpired(true);
             createdUserEntity.setAccountNonLocked(true);
