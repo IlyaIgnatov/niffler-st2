@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 
 public class LoginNewUserTest extends BaseWebTest {
+    private final NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
 
     @GenerateUser(
             username = "Valentin",
@@ -40,7 +41,6 @@ public class LoginNewUserTest extends BaseWebTest {
     )
     @Test
     void checkUpdateUser(UserEntity user){
-        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
 
         UserEntity updUserEntity = new UserEntity();
         updUserEntity.setId(usersDAO.getUserId(user.getUsername()));
@@ -68,7 +68,6 @@ public class LoginNewUserTest extends BaseWebTest {
     )
     @Test
     void checkDeleteUser(UserEntity user){
-        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
 
         usersDAO.deleteUser(usersDAO.getUserId(user.getUsername()));
 
@@ -87,7 +86,6 @@ public class LoginNewUserTest extends BaseWebTest {
     )
     @Test
     void checkReadUser(UserEntity user){
-        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
 
         UserEntity readUser = usersDAO.readUser(usersDAO.getUserId(user.getUsername()));
         Assertions.assertEquals(user,readUser);
