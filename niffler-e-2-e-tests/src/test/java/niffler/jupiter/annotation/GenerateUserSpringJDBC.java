@@ -1,6 +1,7 @@
 package niffler.jupiter.annotation;
 
 import niffler.jupiter.extension.GenerateUserExtension;
+import niffler.jupiter.extension.GenerateUserSpringJDBCExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;

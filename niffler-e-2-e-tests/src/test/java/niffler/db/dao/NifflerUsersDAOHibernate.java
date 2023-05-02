@@ -4,10 +4,14 @@ import niffler.db.ServiceDB;
 import niffler.db.entity.UserEntity;
 import niffler.db.jpa.EmfProvider;
 import niffler.db.jpa.JpaTransactionManager;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
 
 public class NifflerUsersDAOHibernate extends JpaTransactionManager implements NifflerUsersDAO {
+  private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
 
   public NifflerUsersDAOHibernate() {
     super(EmfProvider.INSTANCE.getEmf(ServiceDB.NIFFLER_AUTH).createEntityManager());
@@ -44,9 +48,9 @@ public class NifflerUsersDAOHibernate extends JpaTransactionManager implements N
         .toString());
   }
 
-  @Override
+  /*@Override
   public int removeUser(UserEntity user) {
     remove(user);
     return 0;
-  }
+  }*/
 }
