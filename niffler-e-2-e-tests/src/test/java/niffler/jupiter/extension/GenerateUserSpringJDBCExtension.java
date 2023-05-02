@@ -12,9 +12,9 @@ import org.junit.jupiter.api.extension.*;
 
 import java.util.Arrays;
 
-public class GenerateUserSpringJDBCExtension implements ParameterResolver, BeforeEachCallback {
+public class GenerateUserSpringJDBCExtension implements ParameterResolver, BeforeEachCallback, AfterTestExecutionCallback {
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace
-            .create(GenerateUserExtension.class);
+            .create(GenerateUserSpringJDBCExtension.class);
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
@@ -60,5 +60,13 @@ public class GenerateUserSpringJDBCExtension implements ParameterResolver, Befor
         final String testID = extensionContext.getRequiredTestClass() + String.valueOf(extensionContext.getTestMethod());
 
         return extensionContext.getStore(NAMESPACE).get(testID + "user", UserEntity.class);
+    }
+
+    @Override
+    public void afterTestExecution(ExtensionContext context) throws Exception {
+        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
+        final String testID = context.getRequiredTestClass() + String.valueOf(context.getTestMethod());
+
+        usersDAO.deleteUser((context.getStore(NAMESPACE).get(testID + "user", UserEntity.class)).getId());
     }
 }

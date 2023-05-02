@@ -7,6 +7,7 @@ import niffler.db.dao.NifflerUsersDAOJdbc;
 import niffler.db.dao.NifflerUsersDAOSpringJdbc;
 import niffler.db.entity.UserEntity;
 import niffler.jupiter.annotation.GenerateUser;
+import niffler.jupiter.annotation.GenerateUserSpringJDBC;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ import static com.codeborne.selenide.Selenide.$;
 public class LoginNewUserTestSpringJDBC extends BaseWebTest {
     NifflerUsersDAO usersDAO = new NifflerUsersDAOSpringJdbc();
 
-    @GenerateUser(
+    @GenerateUserSpringJDBC(
             username = "Valentin",
             password = "12345"
     )
@@ -35,17 +36,15 @@ public class LoginNewUserTestSpringJDBC extends BaseWebTest {
         $(".header").should(visible).shouldHave(text("Niffler. The coin keeper."));
     }
 
-    @GenerateUser(
+    @GenerateUserSpringJDBC(
             username = "Lena",
             password = "12345"
     )
     @Test
     void checkUpdateUser(UserEntity user){
-        NifflerUsersDAO usersDAO2 = new NifflerUsersDAOJdbc();
 
-        System.out.println(usersDAO2.getUserId(user.getUsername()));
         UserEntity updUserEntity = new UserEntity();
-        updUserEntity.setId(usersDAO2.getUserId(user.getUsername()));
+        updUserEntity.setId(usersDAO.getUserId(user.getUsername()));
         updUserEntity.setUsername(user.getUsername() + "-updated");
         updUserEntity.setPassword("123456");
         updUserEntity.setEnabled(false);
@@ -64,7 +63,7 @@ public class LoginNewUserTestSpringJDBC extends BaseWebTest {
         $(byText("User account is locked")).should(visible);
     }
 
-    @GenerateUser(
+    @GenerateUserSpringJDBC(
             username = "Ivan",
             password = "12345"
     )
@@ -82,7 +81,7 @@ public class LoginNewUserTestSpringJDBC extends BaseWebTest {
         $(byText("Bad credentials")).should(visible);
     }
 
-    @GenerateUser(
+    @GenerateUserSpringJDBC(
             username = "Maxim",
             password = "12345"
     )
