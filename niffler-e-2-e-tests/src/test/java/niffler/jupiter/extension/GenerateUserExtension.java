@@ -28,9 +28,9 @@ public class GenerateUserExtension implements ParameterResolver, BeforeEachCallb
 
             UserEntity createdUserEntity = new UserEntity();
             createdUserEntity.setUsername(
-                    (annotation.username()).equals("empty") ? faker.name().username() : annotation.username());
+                    (annotation.username()).equals("") ? faker.name().username() : annotation.username());
             createdUserEntity.setPassword(
-                    (annotation.password()).equals("empty") ? faker.internet().password() : annotation.password());
+                    (annotation.password()).equals("") ? faker.internet().password() : annotation.password());
             createdUserEntity.setEnabled(true);
             createdUserEntity.setAccountNonExpired(true);
             createdUserEntity.setAccountNonLocked(true);

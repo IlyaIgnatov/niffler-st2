@@ -13,8 +13,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @ExtendWith(GenerateUserExtension.class)
 public @interface GenerateUser {
-    String username() default "empty";
+    String username() default "";
 
-    String password() default "empty";
+    String password() default "";
 
 }
