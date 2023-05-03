@@ -2,7 +2,10 @@ package niffler.db.dao;
 
 import niffler.db.DataSourceProvider;
 import niffler.db.ServiceDB;
+import niffler.db.entity.AuthorityEntity;
 import niffler.db.entity.UserEntity;
+import niffler.db.springJDBCMappers.UserAuthorityMapper;
+import niffler.db.springJDBCMappers.UserMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -14,6 +17,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class NifflerUsersDAOSpringJdbc implements NifflerUsersDAO {
@@ -27,7 +31,7 @@ public class NifflerUsersDAOSpringJdbc implements NifflerUsersDAO {
         DataSourceTransactionManager transactionManager = new JdbcTransactionManager(
                 DataSourceProvider.INSTANCE.getDataSource(ServiceDB.NIFFLER_AUTH));
         this.transactionTemplate = new TransactionTemplate(transactionManager);
-        this.jdbcTemplate = new JdbcTemplate(transactionManager.getDataSource());
+        this.jdbcTemplate = new JdbcTemplate(Objects.requireNonNull(transactionManager.getDataSource()));
     }
 
     @Override
@@ -79,18 +83,24 @@ public class NifflerUsersDAOSpringJdbc implements NifflerUsersDAO {
 
     @Override
     public UserEntity readUser(UUID uuid) {
-   /* Actor actor = this.jdbcTemplate.queryForObject(
-            "select first_name, last_name from t_actor where id = ?",
-            new Object[]{user.getId()},
-            new RowMapper<Actor>() {
-              public Actor mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Actor actor = new Actor();
-                actor.setFirstName(rs.getString("first_name"));
-                actor.setLastName(rs.getString("last_name"));
-                return actor;
-              }
-            });*/
-        return null;
+
+        UserEntity userEntity = jdbcTemplate.query("SELECT * FROM users WHERE id=(?)",
+                        new UserMapper(),
+                        uuid)
+                .stream()
+                .findAny()
+                .orElse(null);
+
+        if (userEntity != null) {
+            List<AuthorityEntity> listAuths = jdbcTemplate.query("SELECT * FROM authorities WHERE user_id=(?)",
+                    new UserAuthorityMapper(),
+                    uuid);
+            userEntity.setAuthorities(listAuths);
+        } else {
+            throw new IllegalArgumentException("Unable to read user authorities, no uuid");
+        }
+
+        return userEntity;
     }
 
     @Override
@@ -111,20 +121,20 @@ public class NifflerUsersDAOSpringJdbc implements NifflerUsersDAO {
     public int deleteUser(UUID uuid) {
         return transactionTemplate.execute(st -> {
             jdbcTemplate.update("DELETE FROM authorities WHERE user_id = ?", uuid);
+
             return jdbcTemplate.update("DELETE FROM users WHERE id = ?", uuid);
         });
     }
 
     @Override
     public UUID getUserId(String userName) {
-    /*return jdbcTemplate.query("SELECT * FROM users WHERE username = ?",
-        rs -> {return UUID.fromString(rs.getString(1));},
-        userName
-    );*/
-        return UUID.fromString(jdbcTemplate.queryForObject("SELECT id FROM users WHERE username = ?",
-                new Object[]{userName},
-                String.class));
+
+        return (Objects.requireNonNull(jdbcTemplate.query("SELECT * FROM users WHERE username = ?",
+                        new UserMapper(),
+                        userName)
+                .stream()
+                .findAny()
+                .orElse(null)))
+                .getId();
     }
-
-
 }
