@@ -6,6 +6,7 @@ import niffler.db.entity.AuthorityEntity;
 import niffler.db.entity.UserEntity;
 import niffler.db.springJDBCMappers.UserAuthorityMapper;
 import niffler.db.springJDBCMappers.UserMapper;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -85,7 +86,7 @@ public class NifflerUsersDAOSpringJdbc implements NifflerUsersDAO {
     public UserEntity readUser(UUID uuid) {
 
         UserEntity userEntity = jdbcTemplate.query("SELECT * FROM users WHERE id=(?)",
-                        new UserMapper(),
+                        new BeanPropertyRowMapper<>(UserEntity.class),
                         uuid)
                 .stream()
                 .findAny()

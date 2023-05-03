@@ -1,26 +1,23 @@
 package niffler.test;
 
-import com.codeborne.selenide.Selenide;
-import io.qameta.allure.Allure;
-import niffler.db.dao.NifflerUsersDAO;
-import niffler.db.dao.NifflerUsersDAOJdbc;
-import niffler.db.dao.NifflerUsersDAOSpringJdbc;
-import niffler.db.entity.UserEntity;
-import niffler.jupiter.annotation.GenerateUser;
-import niffler.jupiter.annotation.GenerateUserSpringJDBC;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
+import com.codeborne.selenide.Selenide;
+import io.qameta.allure.Allure;
+import niffler.db.dao.NifflerUsersDAO;
+import niffler.db.dao.NifflerUsersDAOJdbc;
+import niffler.db.entity.UserEntity;
+import niffler.jupiter.annotation.GenerateUser;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class LoginNewUserTestSpringJDBC extends BaseWebTest {
-    NifflerUsersDAO usersDAO = new NifflerUsersDAOSpringJdbc();
 
-    @GenerateUserSpringJDBC(
+public class LoginNewUserTestJDBC extends BaseWebTest {
+
+    @GenerateUser(
             username = "Valentin",
             password = "12345"
     )
@@ -36,12 +33,13 @@ public class LoginNewUserTestSpringJDBC extends BaseWebTest {
         $(".header").should(visible).shouldHave(text("Niffler. The coin keeper."));
     }
 
-    @GenerateUserSpringJDBC(
+    @GenerateUser(
             username = "Lena",
             password = "12345"
     )
     @Test
     void checkUpdateUser(UserEntity user){
+        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
 
         UserEntity updUserEntity = new UserEntity();
         updUserEntity.setId(usersDAO.getUserId(user.getUsername()));
@@ -63,12 +61,14 @@ public class LoginNewUserTestSpringJDBC extends BaseWebTest {
         $(byText("User account is locked")).should(visible);
     }
 
-    @GenerateUserSpringJDBC(
+    @GenerateUser(
             username = "Ivan",
             password = "12345"
     )
     @Test
     void checkDeleteUser(UserEntity user){
+        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
+
         usersDAO.deleteUser(usersDAO.getUserId(user.getUsername()));
 
         Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
@@ -80,12 +80,13 @@ public class LoginNewUserTestSpringJDBC extends BaseWebTest {
         $(byText("Bad credentials")).should(visible);
     }
 
-    @GenerateUserSpringJDBC(
+    @GenerateUser(
             username = "Maxim",
             password = "12345"
     )
     @Test
     void checkReadUser(UserEntity user){
+        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
 
         UserEntity readUser = usersDAO.readUser(usersDAO.getUserId(user.getUsername()));
         Assertions.assertEquals(user,readUser);

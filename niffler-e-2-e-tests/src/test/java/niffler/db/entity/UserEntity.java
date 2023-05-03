@@ -1,105 +1,132 @@
 package niffler.db.entity;
 
-import static jakarta.persistence.FetchType.EAGER;
+import jakarta.persistence.*;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static jakarta.persistence.FetchType.EAGER;
+
+@Entity
+@Table(name = "users")
 public class UserEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false, columnDefinition = "UUID default gen_random_uuid()")
+    private UUID id;
 
-  private UUID id;
-  private String username;
-  private String password;
-  private Boolean enabled;
-  private Boolean accountNonExpired;
-  private Boolean accountNonLocked;
-  private Boolean credentialsNonExpired;
-  private List<AuthorityEntity> authorities = new ArrayList<>();
+    @Column(nullable = false, unique = true)
+    private String username;
 
-  public UUID getId() {
-    return id;
-  }
+    @Column(nullable = false)
+    private String password;
 
-  public void setId(UUID id) {
-    this.id = id;
-  }
+    @Transient
+    private String decodedPassword;
 
-  public String getUsername() {
-    return username;
-  }
+    @Column(nullable = false)
+    private Boolean enabled;
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+    @Column(name = "account_non_expired", nullable = false)
+    private Boolean accountNonExpired;
 
-  public String getPassword() {
-    return password;
-  }
+    @Column(name = "account_non_locked", nullable = false)
+    private Boolean accountNonLocked;
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+    @Column(name = "credentials_non_expired", nullable = false)
+    private Boolean credentialsNonExpired;
 
-  public Boolean getEnabled() {
-    return enabled;
-  }
+    @OneToMany(fetch = EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+    private List<AuthorityEntity> authorities = new ArrayList<>();
 
-  public void setEnabled(Boolean enabled) {
-    this.enabled = enabled;
-  }
+    public UUID getId() {
+        return id;
+    }
 
-  public Boolean getAccountNonExpired() {
-    return accountNonExpired;
-  }
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-  public void setAccountNonExpired(Boolean accountNonExpired) {
-    this.accountNonExpired = accountNonExpired;
-  }
+    public String getUsername() {
+        return username;
+    }
 
-  public Boolean getAccountNonLocked() {
-    return accountNonLocked;
-  }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-  public void setAccountNonLocked(Boolean accountNonLocked) {
-    this.accountNonLocked = accountNonLocked;
-  }
+    public String getPassword() {
+        return password;
+    }
 
-  public Boolean getCredentialsNonExpired() {
-    return credentialsNonExpired;
-  }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-  public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
-    this.credentialsNonExpired = credentialsNonExpired;
-  }
+    public String getDecodedPassword() {
+        return decodedPassword;
+    }
 
-  public List<AuthorityEntity> getAuthorities() {
-    return authorities;
-  }
+    public void setDecodedPassword(String decodedPassword) {
+        this.decodedPassword = decodedPassword;
+    }
 
-  public void setAuthorities(List<AuthorityEntity> authorities) {
-    this.authorities = authorities;
-  }
+    public Boolean getEnabled() {
+        return enabled;
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    UserEntity that = (UserEntity) o;
-    return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(enabled, that.enabled) && Objects.equals(accountNonExpired, that.accountNonExpired) && Objects.equals(accountNonLocked, that.accountNonLocked) && Objects.equals(credentialsNonExpired, that.credentialsNonExpired) && Objects.equals(authorities.stream().iterator().next().getAuthority(), that.authorities.stream().iterator().next().getAuthority());
-  }
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, username, enabled, accountNonExpired, accountNonLocked, credentialsNonExpired, authorities.stream().iterator().next().getAuthority());
-  }
+    public Boolean getAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    public void setAccountNonExpired(Boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
+
+    public Boolean getAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    public void setAccountNonLocked(Boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+    public Boolean getCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
+
+    public List<AuthorityEntity> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(List<AuthorityEntity> authorities) {
+        this.authorities = authorities;
+    }
+
+    public void addAuthorities(AuthorityEntity... authorities) {
+        this.authorities.addAll(List.of(authorities));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(enabled, that.enabled) && Objects.equals(accountNonExpired, that.accountNonExpired) && Objects.equals(accountNonLocked, that.accountNonLocked) && Objects.equals(credentialsNonExpired, that.credentialsNonExpired) && Objects.equals(authorities.stream().iterator().next().getAuthority(), that.authorities.stream().iterator().next().getAuthority());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, enabled, accountNonExpired, accountNonLocked, credentialsNonExpired, authorities.stream().iterator().next().getAuthority());
+    }
 }
