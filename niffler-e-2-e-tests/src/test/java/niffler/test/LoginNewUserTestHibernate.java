@@ -4,10 +4,8 @@ import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Allure;
 import niffler.db.dao.NifflerUsersDAO;
 import niffler.db.dao.NifflerUsersDAOHibernate;
-import niffler.db.dao.NifflerUsersDAOSpringJdbc;
 import niffler.db.entity.UserEntity;
 import niffler.jupiter.annotation.GenerateUserHibernate;
-import niffler.jupiter.annotation.GenerateUserSpringJDBC;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +16,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 
 public class LoginNewUserTestHibernate extends BaseWebTest {
-    NifflerUsersDAO usersDAO = new NifflerUsersDAOHibernate();
+    private final NifflerUsersDAO usersDAO = new NifflerUsersDAOHibernate();
 
     @GenerateUserHibernate(
             username = "Valentin",
@@ -42,22 +40,21 @@ public class LoginNewUserTestHibernate extends BaseWebTest {
     )
     @Test
     void checkUpdateUser(UserEntity user){
+        UserEntity updUser = usersDAO.readUser(user.getId());
+        updUser.setUsername(user.getUsername() + "-updated");
+        updUser.setPassword("123");
+        updUser.setDecodedPassword(user.getDecodedPassword());
+        updUser.setEnabled(false);
+        updUser.setAccountNonExpired(false);
+        updUser.setAccountNonLocked(false);
+        updUser.setCredentialsNonExpired(false);
 
-        UserEntity updUserEntity = new UserEntity();
-        updUserEntity.setId(usersDAO.getUserId(user.getUsername()));
-        updUserEntity.setUsername(user.getUsername() + "-updated");
-        updUserEntity.setPassword("123456");
-        updUserEntity.setEnabled(false);
-        updUserEntity.setAccountNonExpired(false);
-        updUserEntity.setAccountNonLocked(false);
-        updUserEntity.setCredentialsNonExpired(false);
-
-        usersDAO.updateUser(updUserEntity);
+        usersDAO.updateUser(updUser);
 
         Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
         $("a[href*='redirect']").click();
-        $("input[name='username']").setValue(updUserEntity.getUsername());
-        $("input[name='password']").setValue(updUserEntity.getPassword());
+        $("input[name='username']").setValue(user.getUsername());
+        $("input[name='password']").setValue(user.getDecodedPassword());
         $("button[type='submit']").click();
 
         $(byText("User account is locked")).should(visible);
@@ -86,7 +83,6 @@ public class LoginNewUserTestHibernate extends BaseWebTest {
     )
     @Test
     void checkReadUser(UserEntity user){
-
         UserEntity readUser = usersDAO.readUser(usersDAO.getUserId(user.getUsername()));
         Assertions.assertEquals(user,readUser);
     }

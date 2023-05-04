@@ -3,10 +3,8 @@ package niffler.test;
 import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Allure;
 import niffler.db.dao.NifflerUsersDAO;
-import niffler.db.dao.NifflerUsersDAOJdbc;
 import niffler.db.dao.NifflerUsersDAOSpringJdbc;
 import niffler.db.entity.UserEntity;
-import niffler.jupiter.annotation.GenerateUser;
 import niffler.jupiter.annotation.GenerateUserSpringJDBC;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +16,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 
 public class LoginNewUserTestSpringJDBC extends BaseWebTest {
-    NifflerUsersDAO usersDAO = new NifflerUsersDAOSpringJdbc();
+    private final NifflerUsersDAO usersDAO = new NifflerUsersDAOSpringJdbc();
 
     @GenerateUserSpringJDBC(
             username = "Valentin",

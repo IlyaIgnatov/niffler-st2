@@ -129,4 +129,19 @@ public class UserEntity {
     public int hashCode() {
         return Objects.hash(id, username, enabled, accountNonExpired, accountNonLocked, credentialsNonExpired, authorities.stream().iterator().next().getAuthority());
     }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", decodedPassword='" + decodedPassword + '\'' +
+                ", enabled=" + enabled +
+                ", accountNonExpired=" + accountNonExpired +
+                ", accountNonLocked=" + accountNonLocked +
+                ", credentialsNonExpired=" + credentialsNonExpired +
+                ", authorities=" + authorities +
+                '}';
+    }
 }

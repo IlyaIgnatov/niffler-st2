@@ -2,6 +2,7 @@ package niffler.db.jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import niffler.db.entity.UserEntity;
 
 import java.util.function.Consumer;
 
@@ -21,9 +22,11 @@ public abstract class JpaTransactionManager {
     transaction(em -> em.remove(entity));
   }
 
+
   protected void merge(Object entity) {
     transaction(em -> em.merge(entity));
   }
+
 
   protected void transaction(Consumer<EntityManager> consumer) {
     EntityTransaction transaction = em.getTransaction();

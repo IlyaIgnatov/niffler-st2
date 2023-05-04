@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 
 public class LoginNewUserTestJDBC extends BaseWebTest {
+    private final NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
 
     @GenerateUser(
             username = "Valentin",
@@ -39,8 +40,6 @@ public class LoginNewUserTestJDBC extends BaseWebTest {
     )
     @Test
     void checkUpdateUser(UserEntity user){
-        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
-
         UserEntity updUserEntity = new UserEntity();
         updUserEntity.setId(usersDAO.getUserId(user.getUsername()));
         updUserEntity.setUsername(user.getUsername() + "-updated");
@@ -67,8 +66,6 @@ public class LoginNewUserTestJDBC extends BaseWebTest {
     )
     @Test
     void checkDeleteUser(UserEntity user){
-        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
-
         usersDAO.deleteUser(usersDAO.getUserId(user.getUsername()));
 
         Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
@@ -86,8 +83,6 @@ public class LoginNewUserTestJDBC extends BaseWebTest {
     )
     @Test
     void checkReadUser(UserEntity user){
-        NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
-
         UserEntity readUser = usersDAO.readUser(usersDAO.getUserId(user.getUsername()));
         Assertions.assertEquals(user,readUser);
     }
