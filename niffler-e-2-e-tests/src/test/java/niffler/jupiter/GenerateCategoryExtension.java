@@ -7,11 +7,18 @@ import org.junit.jupiter.api.extension.*;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import java.util.List;
+
 
 public class GenerateCategoryExtension implements ParameterResolver, BeforeEachCallback {
 
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace
             .create(GenerateCategoryExtension.class);
+
+    private String getUniqueTestId(ExtensionContext extensionContext) {
+        return extensionContext.getRequiredTestClass().getSimpleName() + ":"
+                + extensionContext.getRequiredTestMethod().getName();
+    }
 
     private static final OkHttpClient httpClient = new OkHttpClient.Builder()
             .build();
@@ -27,31 +34,43 @@ public class GenerateCategoryExtension implements ParameterResolver, BeforeEachC
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
 
-        final String testID = context.getRequiredTestClass() + String.valueOf(context.getTestMethod());
-
         GenerateCategory annotation = context.getRequiredTestMethod()
                 .getAnnotation(GenerateCategory.class);
 
         if (annotation != null) {
-            CategoryJson category = new CategoryJson();
-            category.setUsername(annotation.username());
-            category.setCategory(annotation.category());
-
-            CategoryJson created = categoryService.addCategory(category)
+            List<CategoryJson> getAllUserCategories = categoryService.getCategories(annotation.username())
                     .execute()
                     .body();
-            context.getStore(NAMESPACE).put(testID + "category", created);
+
+            if (getAllUserCategories != null && getAllUserCategories.stream().anyMatch(x -> x.getCategory().equals(annotation.category()))) {
+                CategoryJson existingCategory = getAllUserCategories.stream()
+                        .filter(x -> x.getCategory().equals(annotation.category()))
+                        .findFirst()
+                        .orElse(null);
+
+                context.getStore(NAMESPACE).put(getUniqueTestId(context) + "category", existingCategory);
+            } else {
+                CategoryJson category = new CategoryJson();
+                category.setUsername(annotation.username());
+                category.setCategory(annotation.category());
+
+                CategoryJson created = categoryService.addCategory(category)
+                        .execute()
+                        .body();
+
+                context.getStore(NAMESPACE).put(getUniqueTestId(context) + "category", created);
+            }
         }
     }
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext,
-        ExtensionContext extensionContext) throws ParameterResolutionException {
+                                     ExtensionContext extensionContext) throws ParameterResolutionException {
         return parameterContext.getParameter().getType().isAssignableFrom(CategoryJson.class);
     }
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return null;
+        return extensionContext.getStore(NAMESPACE).get(getUniqueTestId(extensionContext) + "category", CategoryJson.class);
     }
 }

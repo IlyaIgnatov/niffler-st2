@@ -9,8 +9,10 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import niffler.jupiter.GenerateCategory;
 import niffler.jupiter.GenerateSpend;
+import niffler.model.CategoryJson;
 import niffler.model.CurrencyValues;
 import niffler.model.SpendJson;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +21,7 @@ public class SpendsWebTest extends BaseTest{
 
     final static String USERNAME = "PETR";
     final static String PASSWORD = "12345";
-    final static String CATEGORY = "Education";
+    final static String CATEGORY = "Education5";
 
     static {
         Configuration.browserSize = "1920x1080";
@@ -46,10 +48,12 @@ public class SpendsWebTest extends BaseTest{
         category = CATEGORY
     )
     @Test
-    void spendShouldBeDeletedByActionInTable(SpendJson spend) {
+    void spendShouldBeDeletedByActionInTable(SpendJson spend, CategoryJson category) {
+        Assertions.assertEquals(category.getCategory(), CATEGORY);
+
         $(".spendings-table tbody").$$("tr")
             .find(text(spend.getDescription()))
-            .$$("td").first()
+            .$("td")
             .scrollTo()
             .click();
 

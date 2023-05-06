@@ -17,6 +17,11 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace
         .create(GenerateSpendExtension.class);
 
+    private String getUniqueTestId(ExtensionContext extensionContext) {
+        return extensionContext.getRequiredTestClass().getSimpleName() + ":"
+                + extensionContext.getRequiredTestMethod().getName();
+    }
+
     private static final OkHttpClient httpClient = new OkHttpClient.Builder()
         .build();
 
@@ -30,8 +35,6 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-
-        final String testID = context.getRequiredTestClass() + String.valueOf(context.getTestMethod());
 
         GenerateSpend annotation = context.getRequiredTestMethod()
             .getAnnotation(GenerateSpend.class);
@@ -48,7 +51,7 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
             SpendJson created = spendService.addSpend(spend)
                 .execute()
                 .body();
-            context.getStore(NAMESPACE).put(testID + "spend", created);
+            context.getStore(NAMESPACE).put(getUniqueTestId(context) + "spend", created);
         }
     }
 
@@ -61,9 +64,6 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
     @Override
     public SpendJson resolveParameter(ParameterContext parameterContext,
         ExtensionContext extensionContext) throws ParameterResolutionException {
-
-        final String testID = extensionContext.getRequiredTestClass() + String.valueOf(extensionContext.getTestMethod());
-
-        return extensionContext.getStore(NAMESPACE).get( testID + "spend", SpendJson.class);
+        return extensionContext.getStore(NAMESPACE).get( getUniqueTestId(extensionContext) + "spend", SpendJson.class);
     }
 }
