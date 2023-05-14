@@ -1,6 +1,6 @@
-package niffler.jupiter.annotation;
+package niffler.jupiter.annotations;
 
-import niffler.jupiter.extension.UsersQueueExtension;
+import niffler.jupiter.extensions.UsersQueueExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;

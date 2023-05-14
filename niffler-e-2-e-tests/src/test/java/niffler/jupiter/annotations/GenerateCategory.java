@@ -1,6 +1,6 @@
-package niffler.jupiter.annotation;
+package niffler.jupiter.annotations;
 
-import niffler.jupiter.extension.GenerateCategoryExtension;
+import niffler.jupiter.extensions.GenerateCategoryExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;

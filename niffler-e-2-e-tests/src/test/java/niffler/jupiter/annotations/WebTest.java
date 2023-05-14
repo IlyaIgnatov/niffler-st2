@@ -1,12 +1,11 @@
-package niffler.jupiter.annotation;
+package niffler.jupiter.annotations;
 
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import niffler.jupiter.extension.BrowserExtension;
-import niffler.jupiter.extension.GenerateSpendExtension;
+import niffler.jupiter.extensions.BrowserExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @Target(ElementType.TYPE)

@@ -2,7 +2,7 @@ package niffler.test;
 
 
 import com.codeborne.selenide.Configuration;
-import niffler.jupiter.annotation.WebTest;
+import niffler.jupiter.annotations.WebTest;
 
 @WebTest
 public abstract class BaseWebTest {

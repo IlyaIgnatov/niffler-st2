@@ -1,4 +1,4 @@
-package niffler.jupiter.extension;
+package niffler.jupiter.extensions;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;

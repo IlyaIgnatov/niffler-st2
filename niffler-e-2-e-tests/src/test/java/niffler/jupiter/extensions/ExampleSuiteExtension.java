@@ -1,4 +1,4 @@
-package niffler.jupiter.extension;
+package niffler.jupiter.extensions;
 
 import niffler.jupiter.SuiteExtension;
 

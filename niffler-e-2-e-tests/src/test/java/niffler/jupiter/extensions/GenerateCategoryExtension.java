@@ -1,7 +1,7 @@
-package niffler.jupiter.extension;
+package niffler.jupiter.extensions;
 
 import niffler.api.CategoryService;
-import niffler.jupiter.annotation.GenerateCategory;
+import niffler.jupiter.annotations.GenerateCategory;
 import niffler.model.CategoryJson;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.extension.*;

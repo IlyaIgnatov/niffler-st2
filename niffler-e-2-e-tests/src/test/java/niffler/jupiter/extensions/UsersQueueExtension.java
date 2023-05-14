@@ -1,11 +1,11 @@
-package niffler.jupiter.extension;
+package niffler.jupiter.extensions;
 
 import io.qameta.allure.AllureId;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import niffler.jupiter.annotation.User;
-import niffler.jupiter.annotation.User.UserType;
+import niffler.jupiter.annotations.User;
+import niffler.jupiter.annotations.User.UserType;
 import niffler.model.UserJson;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -59,20 +59,34 @@ public class UsersQueueExtension implements
                 context.getStore(USER_EXTENSION_NAMESPACE).put(testId + Arrays.asList(testParameters).indexOf(parameter), Map.of(userType, user));
             }
         }
+
+       /* Parameter[] testParameters = context.getRequiredTestMethod().getParameters();
+
+        List<Map<UserType, UserJson>> parameterUsersList = new ArrayList<>();
+
+        Arrays.stream(testParameters)
+                .filter(x -> x.isAnnotationPresent(User.class))
+                .map(x -> x.getAnnotation(User.class))
+                .toList();*/
+
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
+    public void afterTestExecution(ExtensionContext context){
         final String testId = getTestId(context);
-        Map<UserType, UserJson> user = (Map<UserType, UserJson>) context.getStore(USER_EXTENSION_NAMESPACE)
-                .get(testId);
 
-        UserType userType = user.keySet().iterator().next();
-        switch (userType) {
-            case WITH_FRIENDS -> USERS_WITH_FRIENDS_QUEUE.add(user.get(userType));
-            case INVITATION_SENT -> USERS_INVITATION_SENT_QUEUE.add(user.get(userType));
-            case INVITATION_RECEIVED -> USERS_INVITATION_RECEIVED_QUEUE.add(user.get(userType));
+        Parameter[] testParameters = context.getRequiredTestMethod().getParameters();
+        for (Parameter parameter : testParameters) {
+            Map<UserType, UserJson> user = (Map<UserType, UserJson>) context.getStore(USER_EXTENSION_NAMESPACE)
+                    .get(testId + Arrays.asList(testParameters).indexOf(parameter));
+
+            UserType userType = user.keySet().iterator().next();
+            switch (userType) {
+                case WITH_FRIENDS -> USERS_WITH_FRIENDS_QUEUE.add(user.get(userType));
+                case INVITATION_SENT -> USERS_INVITATION_SENT_QUEUE.add(user.get(userType));
+                case INVITATION_RECEIVED -> USERS_INVITATION_RECEIVED_QUEUE.add(user.get(userType));
+            }
         }
     }
 
@@ -88,6 +102,7 @@ public class UsersQueueExtension implements
     public UserJson resolveParameter(ParameterContext parameterContext,
                                      ExtensionContext extensionContext) throws ParameterResolutionException {
         final String testId = getTestId(extensionContext);
+        List<UserJson> userList = new ArrayList<>();
 
         Parameter[] testParameters = extensionContext.getRequiredTestMethod().getParameters();
         for (Parameter parameter : testParameters) {
@@ -95,8 +110,10 @@ public class UsersQueueExtension implements
             Map<UserType, UserJson> user = (Map<UserType, UserJson>) extensionContext.getStore(USER_EXTENSION_NAMESPACE)
                     .get(testId + Arrays.asList(testParameters).indexOf(parameter));
 
-            return user.values().iterator().next();
+            userList.add(user.values().iterator().next());
         }
+
+        return userList.get(parameterContext.getIndex());
     }
 
     private String getTestId(ExtensionContext context) {

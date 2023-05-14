@@ -1,4 +1,4 @@
-package niffler.jupiter.annotation;
+package niffler.jupiter.annotations;
 
 
 import java.lang.annotation.ElementType;
@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import niffler.jupiter.extension.GenerateSpendExtension;
+import niffler.jupiter.extensions.GenerateSpendExtension;
 import niffler.model.CurrencyValues;
 import org.junit.jupiter.api.extension.ExtendWith;
 
