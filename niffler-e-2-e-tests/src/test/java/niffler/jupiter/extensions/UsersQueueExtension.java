@@ -59,16 +59,6 @@ public class UsersQueueExtension implements
                 context.getStore(USER_EXTENSION_NAMESPACE).put(testId + Arrays.asList(testParameters).indexOf(parameter), Map.of(userType, user));
             }
         }
-
-       /* Parameter[] testParameters = context.getRequiredTestMethod().getParameters();
-
-        List<Map<UserType, UserJson>> parameterUsersList = new ArrayList<>();
-
-        Arrays.stream(testParameters)
-                .filter(x -> x.isAnnotationPresent(User.class))
-                .map(x -> x.getAnnotation(User.class))
-                .toList();*/
-
     }
 
     @SuppressWarnings("unchecked")

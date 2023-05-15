@@ -1,5 +1,6 @@
 package niffler.test;
 
+import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static niffler.jupiter.annotations.User.UserType.*;
@@ -35,6 +36,15 @@ public class FriendsWebTest extends BaseWebTest {
         System.out.println("Test102. 3d user credentials: " + user3.getUsername() + " " + user3.getPassword());
         System.out.println("Test102. 4d user credentials: " + user4.getUsername() + " " + user4.getPassword());
         System.out.println("Test102. 5d user credentials: " + user5.getUsername() + " " + user5.getPassword());
+
+        Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
+        $("a[href*='redirect']").click();
+        $("input[name='username']").setValue(user1.getUsername());
+        $("input[name='password']").setValue(user1.getPassword());
+        $("button[type='submit']").click();
+
+        $("a[href*='friends']").click();
+        $$(".table tbody tr").shouldHave(sizeGreaterThan(0));
     }
 
     @AllureId("103")
@@ -42,6 +52,15 @@ public class FriendsWebTest extends BaseWebTest {
     void friendsShouldBeVisible1(@User(userType = WITH_FRIENDS) UserJson user1) {
         Assertions.assertNotNull(user1);
         System.out.println("Test104. First user credentials: " + user1.getUsername() + " " + user1.getPassword());
+
+        Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
+        $("a[href*='redirect']").click();
+        $("input[name='username']").setValue(user1.getUsername());
+        $("input[name='password']").setValue(user1.getPassword());
+        $("button[type='submit']").click();
+
+        $("a[href*='friends']").click();
+        $$(".table tbody tr").shouldHave(sizeGreaterThan(0));
     }
 
     @AllureId("104")
@@ -49,6 +68,16 @@ public class FriendsWebTest extends BaseWebTest {
     void friendsShouldBeVisible2(@User(userType = INVITATION_SENT) UserJson user1) {
         Assertions.assertNotNull(user1);
         System.out.println("Test104. First user credentials: " + user1.getUsername() + " " + user1.getPassword());
+
+        Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
+        $("a[href*='redirect']").click();
+        $("input[name='username']").setValue(user1.getUsername());
+        $("input[name='password']").setValue(user1.getPassword());
+        $("button[type='submit']").click();
+
+        $("a[href*='people']").click();
+        $$(".table tbody tr").find(Condition.text("Pending invitation"))
+                .should(Condition.visible);
     }
 
     @AllureId("105")
@@ -56,6 +85,16 @@ public class FriendsWebTest extends BaseWebTest {
     void friendsShouldBeVisible3(@User(userType = INVITATION_SENT) UserJson user1) {
         Assertions.assertNotNull(user1);
         System.out.println("Test105. First user credentials: " + user1.getUsername() + " " + user1.getPassword());
+
+        Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
+        $("a[href*='redirect']").click();
+        $("input[name='username']").setValue(user1.getUsername());
+        $("input[name='password']").setValue(user1.getPassword());
+        $("button[type='submit']").click();
+
+        $("a[href*='people']").click();
+        $$(".table tbody tr").find(Condition.text("Pending invitation"))
+                .should(Condition.visible);
     }
 
     @AllureId("106")
@@ -63,5 +102,14 @@ public class FriendsWebTest extends BaseWebTest {
     void friendsShouldBeVisible4(@User(userType = INVITATION_SENT) UserJson user1) {
         Assertions.assertNotNull(user1);
         System.out.println("Test106. First user credentials: " + user1.getUsername() + " " + user1.getPassword());
+        Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
+        $("a[href*='redirect']").click();
+        $("input[name='username']").setValue(user1.getUsername());
+        $("input[name='password']").setValue(user1.getPassword());
+        $("button[type='submit']").click();
+
+        $("a[href*='people']").click();
+        $$(".table tbody tr").find(Condition.text("Pending invitation"))
+                .should(Condition.visible);
     }
 }
