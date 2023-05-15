@@ -13,11 +13,10 @@ import io.qameta.allure.AllureId;
 import niffler.jupiter.annotations.User;
 import niffler.model.UserJson;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 
-public class FriendsWebTest extends BaseWebTest {
+public class MoreThanOneUserParameterTest extends BaseWebTest {
 
     @AllureId("102")
     @Test
