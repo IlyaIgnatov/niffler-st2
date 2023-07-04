@@ -2,6 +2,7 @@ package guru.qa.niffler.test;
 
 
 import guru.qa.niffler.api.UserService;
+import guru.qa.niffler.jupiter.annotation.ClasspathUser;
 import guru.qa.niffler.model.UserJson;
 import io.qameta.allure.AllureId;
 import okhttp3.OkHttpClient;
@@ -34,7 +35,7 @@ public class ArgumentConverterUserUpdateTest {
     })
     @AllureId("105")
     @ParameterizedTest
-    void userDataShouldBeUpdated(UserJson user) throws IOException {
+    void userDataShouldBeUpdated(@ClasspathUser UserJson user) throws IOException {
         userService.updateUserInfo(user)
                 .execute();
 
