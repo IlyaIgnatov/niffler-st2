@@ -1,5 +1,6 @@
 package guru.qa.niffler.test.niffler;
 
+import guru.qa.niffler.jupiter.extension.CallbacksExtension;
 import guru.qa.niffler.test.BaseTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;

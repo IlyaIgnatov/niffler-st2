@@ -1,5 +1,6 @@
 package guru.qa.niffler.jupiter.extension;
 
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.UserJson;
 import io.qameta.allure.AllureId;
 
@@ -40,7 +41,7 @@ public class UsersQueueExtension implements
         for (Parameter parameter : testParameters) {
             User desiredUser = parameter.getAnnotation(User.class);
             if (desiredUser != null) {
-                UserType userType = desiredUser.userType();
+                User.UserType userType = desiredUser.userType();
 
                 UserJson user = null;
                 while (user == null) {
@@ -63,10 +64,10 @@ public class UsersQueueExtension implements
 
         Parameter[] testParameters = context.getRequiredTestMethod().getParameters();
         for (Parameter parameter : testParameters) {
-            Map<UserType, UserJson> user = (Map<UserType, UserJson>) context.getStore(USER_EXTENSION_NAMESPACE)
+            Map<User.UserType, UserJson> user = (Map<User.UserType, UserJson>) context.getStore(USER_EXTENSION_NAMESPACE)
                     .get(testId + Arrays.asList(testParameters).indexOf(parameter));
 
-            UserType userType = user.keySet().iterator().next();
+            User.UserType userType = user.keySet().iterator().next();
             switch (userType) {
                 case WITH_FRIENDS -> USERS_WITH_FRIENDS_QUEUE.add(user.get(userType));
                 case INVITATION_SENT -> USERS_INVITATION_SENT_QUEUE.add(user.get(userType));
@@ -92,7 +93,7 @@ public class UsersQueueExtension implements
         Parameter[] testParameters = extensionContext.getRequiredTestMethod().getParameters();
         for (Parameter parameter : testParameters) {
 
-            Map<UserType, UserJson> user = (Map<UserType, UserJson>) extensionContext.getStore(USER_EXTENSION_NAMESPACE)
+            Map<User.UserType, UserJson> user = (Map<User.UserType, UserJson>) extensionContext.getStore(USER_EXTENSION_NAMESPACE)
                     .get(testId + Arrays.asList(testParameters).indexOf(parameter));
 
             userList.add(user.values().iterator().next());
