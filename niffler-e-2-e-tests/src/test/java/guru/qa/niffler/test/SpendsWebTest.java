@@ -14,10 +14,9 @@ import guru.qa.niffler.model.SpendJson;
 import io.qameta.allure.AllureId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled
+
 public class SpendsWebTest extends BaseWebTest {
     final static String USERNAME = "PETR";
     final static String PASSWORD = "12345";
