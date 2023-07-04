@@ -2,23 +2,25 @@ package guru.qa.niffler.config;
 
 public interface Config {
 
-  static Config getConfig() {
-    if ("docker".equals(System.getProperty("env"))) {
-      return new DockerConfig();
+    static Config getConfig() {
+        if ("docker" .equals(System.getProperty("env"))) {
+            return new DockerConfig();
+        }
+        return new LocalConfig();
     }
-    return new LocalConfig();
-  }
 
-  String getDBHost();
+    String getDBHost();
 
-  String getDBLogin();
+    String getDBLogin();
 
-  String getDBPassword();
+    String getDBPassword();
 
-  int getDBPort();
+    int getDBPort();
 
-  String getSpendUrl();
-  String getFrontUrl();
-  String getAuthUrl();
+    String getSpendUrl();
+
+    String getFrontUrl();
+
+    String getAuthUrl();
 
 }

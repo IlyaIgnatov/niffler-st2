@@ -9,18 +9,18 @@ import java.io.IOException;
 
 public class SpendRestClient extends BaseRestClient {
 
-  public SpendRestClient() {
-    super(Config.getConfig().getSpendUrl());
-  }
-
-  private final SpendService spendService = retrofit.create(SpendService.class);
-
-  public @Nonnull SpendJson addSpend(SpendJson spend) {
-    try {
-      return spendService.addSpend(spend).execute().body();
-    } catch (IOException e) {
-      Assertions.fail("Can`t execute api call to niffler-spend: " + e.getMessage());
-      return null;
+    public SpendRestClient() {
+        super(Config.getConfig().getSpendUrl());
     }
-  }
+
+    private final SpendService spendService = retrofit.create(SpendService.class);
+
+    public @Nonnull SpendJson addSpend(SpendJson spend) {
+        try {
+            return spendService.addSpend(spend).execute().body();
+        } catch (IOException e) {
+            Assertions.fail("Can`t execute api call to niffler-spend: " + e.getMessage());
+            return null;
+        }
+    }
 }

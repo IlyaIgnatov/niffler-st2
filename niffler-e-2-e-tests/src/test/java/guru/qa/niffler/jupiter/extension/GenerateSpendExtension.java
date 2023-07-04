@@ -1,11 +1,9 @@
+
 package guru.qa.niffler.jupiter.extension;
 
-import java.util.Date;
-
-import guru.qa.niffler.api.SpendRestClient;
-import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.api.SpendService;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
+import guru.qa.niffler.model.SpendJson;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -15,28 +13,31 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import java.util.Date;
+
 public class GenerateSpendExtension implements ParameterResolver, BeforeEachCallback {
 
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace
         .create(GenerateSpendExtension.class);
 
-//    private static final OkHttpClient httpClient = new OkHttpClient.Builder()
-//        .build();
-//
-//    private static final Retrofit retrofit = new Retrofit.Builder()
-//        .client(httpClient)
-//        .baseUrl("http://127.0.0.1:8093")
-//        .addConverterFactory(JacksonConverterFactory.create())
-//        .build();
-//
-//    private final SpendService spendService = retrofit.create(SpendService.class);
+    private static final OkHttpClient httpClient = new OkHttpClient.Builder()
+            .build();
 
-    private final SpendRestClient spendRestClient = new SpendRestClient();
+    private static final Retrofit retrofit = new Retrofit.Builder()
+            .client(httpClient)
+            .baseUrl("http://127.0.0.1:8093")
+            .addConverterFactory(JacksonConverterFactory.create())
+            .build();
+
+    private final SpendService spendService = retrofit.create(SpendService.class);
+
+    private String getUniqueTestId(ExtensionContext extensionContext) {
+        return extensionContext.getRequiredTestClass().getSimpleName() + ":"
+                + extensionContext.getRequiredTestMethod().getName();
+    }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-
-        final String testID = context.getRequiredTestClass() + String.valueOf(context.getTestMethod());
 
         GenerateSpend annotation = context.getRequiredTestMethod()
             .getAnnotation(GenerateSpend.class);
@@ -50,11 +51,10 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
             spend.setSpendDate(new Date());
             spend.setCurrency(annotation.currency());
 
-//            SpendJson created = spendService.addSpend(spend)
-//                .execute()
-//                .body();
-            SpendJson created = spendRestClient.addSpend(spend);
-            context.getStore(NAMESPACE).put(testID + "spend", created);
+            SpendJson created = spendService.addSpend(spend)
+                .execute()
+                .body();
+            context.getStore(NAMESPACE).put(getUniqueTestId(context) + "spend", created);
         }
     }
 
@@ -68,8 +68,6 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
     public SpendJson resolveParameter(ParameterContext parameterContext,
         ExtensionContext extensionContext) throws ParameterResolutionException {
 
-        final String testID = extensionContext.getRequiredTestClass() + String.valueOf(extensionContext.getTestMethod());
-
-        return extensionContext.getStore(NAMESPACE).get(testID + "spend", SpendJson.class);
+        return extensionContext.getStore(NAMESPACE).get( getUniqueTestId(extensionContext) + "spend", SpendJson.class);
     }
 }

@@ -8,9 +8,11 @@ import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
+import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import io.qameta.allure.AllureId;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -44,10 +46,12 @@ public class SpendsWebTest extends BaseWebTest {
     )
     @AllureId("101")
     @Test
-    void spendShouldBeDeletedByActionInTable(SpendJson spend) {
+    void spendShouldBeDeletedByActionInTable(SpendJson spend, CategoryJson category) {
+        Assertions.assertEquals(category.getCategory(), CATEGORY);
+
         $(".spendings-table tbody").$$("tr")
             .find(text(spend.getDescription()))
-            .$$("td").first()
+            .$("td")
             .scrollTo()
             .click();
 
@@ -57,6 +61,5 @@ public class SpendsWebTest extends BaseWebTest {
         $(".spendings-table tbody")
             .$$("tr")
             .shouldHave(CollectionCondition.size(0));
-        throw new IllegalStateException();
     }
 }

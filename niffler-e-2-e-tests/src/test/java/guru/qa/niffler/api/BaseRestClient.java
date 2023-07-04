@@ -6,18 +6,18 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public abstract class BaseRestClient {
 
-  protected final String serviceBaseUrl;
-  protected final OkHttpClient httpClient;
-  protected final Retrofit retrofit;
+    protected final String serviceBaseUrl;
+    protected final OkHttpClient httpClient;
+    protected final Retrofit retrofit;
 
-  public BaseRestClient(String serviceBaseUrl) {
-    this.serviceBaseUrl = serviceBaseUrl;
-    this.httpClient = new OkHttpClient.Builder()
-        .build();
-    this.retrofit = new Retrofit.Builder()
-        .client(httpClient)
-        .baseUrl(serviceBaseUrl)
-        .addConverterFactory(JacksonConverterFactory.create())
-        .build();
-  }
+    public BaseRestClient(String serviceBaseUrl) {
+        this.serviceBaseUrl = serviceBaseUrl;
+        this.httpClient = new OkHttpClient.Builder()
+                .build();
+        this.retrofit = new Retrofit.Builder()
+                .client(httpClient)
+                .baseUrl(serviceBaseUrl)
+                .addConverterFactory(JacksonConverterFactory.create())
+                .build();
+    }
 }

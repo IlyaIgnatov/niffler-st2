@@ -1,5 +1,5 @@
-package guru.qa.niffler.jupiter.annotation;
 
+package guru.qa.niffler.jupiter.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,13 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(GenerateSpendExtension.class)
 public @interface GenerateSpend {
 
-  String description();
+    String description();
 
-  String username();
+    String username();
 
-  String category();
+    String category();
 
-  double amount();
+    double amount();
 
-  CurrencyValues currency();
+    CurrencyValues currency();
 }
